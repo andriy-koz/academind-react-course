@@ -4,32 +4,25 @@ import { useState } from 'react';
 import MoviesList from './components/MoviesList';
 import './App.css';
 
-// Fetch is a built in browser API for getting data from a backend
-
 function App() {
   const [movies, setMovies] = useState([]);
 
-  function fetchMoviesHandler() {
-    // Asyncronous method wich returns a promise
-    fetch('https://swapi.dev/api/films/')
-      // Returns an object 'response' with useful data and methods
-      .then(response => {
-        // Use json() method to transform json into js usable object
-        // This method returns a promise
-        return response.json();
-      })
-      .then(data => {
-        // Create a new object from data.results extracting and reformatting some data
-        const transformedMovies = data.results.map(movieData => {
-          return {
-            id: movieData.episode_id,
-            title: movieData.title,
-            openingText: movieData.opening_crawl,
-            releaseDate: movieData.release_date,
-          };
-        });
-        setMovies(transformedMovies);
-      });
+  // With async/await we create promises without using then() methods
+  // It's just a syntax change for cleaner look
+  // Using async/await or then(), leads to the same result
+
+  async function fetchMoviesHandler() {
+    const response = await fetch('https://swapi.dev/api/films/');
+    const data = await response.json();
+    const transformedMovies = data.results.map(movieData => {
+      return {
+        id: movieData.episode_id,
+        title: movieData.title,
+        openingText: movieData.opening_crawl,
+        releaseDate: movieData.release_date,
+      };
+    });
+    setMovies(transformedMovies);
   }
 
   return (
