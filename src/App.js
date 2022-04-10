@@ -4,16 +4,21 @@ import { useState } from 'react';
 import MoviesList from './components/MoviesList';
 import './App.css';
 
+// A crucial part of building user interfaces: You want
+// to let your users know wich state your aplication currently has.
+// There is a difference between 'We got no movies', 'We are loading'
+// and 'We have movies'.
+
 function App() {
   const [movies, setMovies] = useState([]);
-
-  // With async/await we create promises without using then() methods
-  // It's just a syntax change for cleaner look
-  // Using async/await or then(), leads to the same result
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchMoviesHandler() {
+    setIsLoading(true); // Set loading state to TRUE
     const response = await fetch('https://swapi.dev/api/films/');
     const data = await response.json();
+    // Could set loading state to FALSE here
+    // Because async tasks are done at this point
     const transformedMovies = data.results.map(movieData => {
       return {
         id: movieData.episode_id,
@@ -23,6 +28,7 @@ function App() {
       };
     });
     setMovies(transformedMovies);
+    setIsLoading(false); // Set loading state to FALSE
   }
 
   return (
@@ -31,7 +37,11 @@ function App() {
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {/* Using conditional rendering based on loading state
+        MoviesList will render only when loading is done */}
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length === 0 && <p>Found no movies.</p>}
+        {isLoading && <p>Loading...</p>}
       </section>
     </React.Fragment>
   );
