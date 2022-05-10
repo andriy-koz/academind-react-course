@@ -10,6 +10,8 @@ const SimpleInput = props => {
   const nameInputRef = useRef();
   // useState: initialize
   const [enteredName, setEneteredName] = useState('');
+  // State to provide user feedback on validation
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(true);
 
   // Function to update state on input change, for useState aproach
   const nameInputChangeHandler = event => {
@@ -19,6 +21,13 @@ const SimpleInput = props => {
   // Function to get the entered value on submission, used for both aproaches
   const formSubmissionHandler = event => {
     event.preventDefault();
+    // Form Validation: if !valid trigger validation state and return
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
+    // Form Validation: test passed, set state to true
+    setEnteredNameIsValid(true);
     // useState: just get the current enteredName value
     console.log(enteredName);
     // useRef: store the value from nameInputRef into a variable
@@ -26,10 +35,14 @@ const SimpleInput = props => {
     const enteredValue = nameInputRef.current.value;
     console.log(enteredValue);
   };
+  // Validation: adding dynamic class names to form
+  const nameInputClasses = enteredNameIsValid
+    ? 'form-control'
+    : 'form-control invalid';
 
   return (
     <form onSubmit={formSubmissionHandler}>
-      <div className='form-control'>
+      <div className={nameInputClasses}>
         <label htmlFor='name'>Your Name</label>
         <input
           // Link to previusly initialized ref hook via the 'ref' property available on every HTML element
@@ -39,6 +52,10 @@ const SimpleInput = props => {
           // Pointer to state handler on every key stroke
           onChange={nameInputChangeHandler}
         />
+        {/* From validation: provide user feedback based on validation state */}
+        {!enteredNameIsValid && (
+          <p className='error-text'>Name must not be empty.</p>
+        )}
       </div>
       <div className='form-actions'>
         <button>Submit</button>
