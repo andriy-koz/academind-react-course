@@ -1,53 +1,54 @@
-// Dealing with form submission and user input
-// Ways of getting user input:
-//  1. useRef -> Get the value on submitting
-//  2. useState -> Get the value on every key stroke and update state
-
 import { useState } from 'react';
 
 const SimpleInput = props => {
-  // useState: initialize
+  // === Handling Name Input ===
   const [enteredName, setEneteredName] = useState('');
   const [enteredNameTouched, setEnteredNameTouched] = useState(false);
-
   const enteredNameIsValid = enteredName.trim() !== '';
   const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
-
-  let formIsValid = false;
-
-  if (enteredNameIsValid) {
-    formIsValid = true;
-  }
-
-  // Function to update state on input change, for useState aproach
   const nameInputChangeHandler = event => {
     setEneteredName(event.target.value);
   };
-
-  // Handles states when the input lost focus
-  const nameInputBlurHandler = event => {
+  const nameInputBlurHandler = () => {
     setEnteredNameTouched(true);
   };
 
-  // Function to get the entered value on submission, used for both aproaches
+  // === Handling Email input ===
+  const [enteredEmail, setEnteredEmail] = useState('');
+  const [enteredEmailTouched, setEnteredEmailTouched] = useState(false);
+  const enteredEmailIsValid = /.*@.*\..+/.test(enteredEmail);
+  const emailInputIsInvalid = !enteredEmailIsValid && enteredEmailTouched;
+  const emailInputChangeHandler = event => {
+    setEnteredEmail(event.target.value);
+  };
+  const emailInputBlurHandler = () => {
+    setEnteredEmailTouched(true);
+  };
+
+  // === Handling overall Form ===
+  let formIsValid = false;
+  if (enteredNameIsValid && enteredEmailIsValid) {
+    formIsValid = true;
+  }
   const formSubmissionHandler = event => {
     event.preventDefault();
-    // Setting touched to true, because we assume that on submission every form input was touched
     setEnteredNameTouched(true);
-    // Form Validation: if !valid trigger validation state and return
-    if (!enteredNameIsValid) {
+    if (!enteredNameIsValid || !enteredEmailIsValid) {
       return;
     }
-    // useState: just get the current enteredName value
     console.log(enteredName);
+    console.log(enteredEmail);
     setEneteredName('');
     setEnteredNameTouched(false);
+    setEnteredEmail('');
+    setEnteredEmailTouched(false);
   };
 
-  // Validation: adding dynamic class names to form
-  const nameInputClasses = nameInputIsInvalid
-    ? 'form-control invalid'
-    : 'form-control';
+  // === Dynamic classes ===
+  const inputClasses = input =>
+    input ? 'form-control invalid' : 'form-control';
+  const nameInputClasses = inputClasses(nameInputIsInvalid);
+  const emailInputClasses = inputClasses(emailInputIsInvalid);
 
   return (
     <form onSubmit={formSubmissionHandler}>
@@ -57,14 +58,24 @@ const SimpleInput = props => {
           type='text'
           id='name'
           value={enteredName}
-          // Pointer to state handler on every key stroke
           onChange={nameInputChangeHandler}
-          // Built-in property wich allows to react when the user clicked outside of the input, and it lost its focus
           onBlur={nameInputBlurHandler}
         />
-        {/* From validation: provide user feedback based on validation state */}
         {nameInputIsInvalid && (
           <p className='error-text'>Name must not be empty.</p>
+        )}
+      </div>
+      <div className={emailInputClasses}>
+        <label htmlFor='email'>Your E-mail</label>
+        <input
+          type='email'
+          id='email'
+          value={enteredEmail}
+          onChange={emailInputChangeHandler}
+          onBlur={emailInputBlurHandler}
+        />
+        {emailInputIsInvalid && (
+          <p className='error-text'>E-mail must be valid.</p>
         )}
       </div>
       <div className='form-actions'>
