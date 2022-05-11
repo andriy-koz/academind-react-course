@@ -3,24 +3,21 @@
 //  1. useRef -> Get the value on submitting
 //  2. useState -> Get the value on every key stroke and update state
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const SimpleInput = props => {
   // useState: initialize
   const [enteredName, setEneteredName] = useState('');
   const [enteredNameTouched, setEnteredNameTouched] = useState(false);
-  const [formIsValid, setFormIsValid] = useState(false);
 
   const enteredNameIsValid = enteredName.trim() !== '';
   const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
-  useEffect(() => {
-    if (enteredNameIsValid) {
-      setFormIsValid(true);
-    } else {
-      setFormIsValid(false);
-    }
-  }, [enteredNameIsValid]);
+  let formIsValid = false;
+
+  if (enteredNameIsValid) {
+    formIsValid = true;
+  }
 
   // Function to update state on input change, for useState aproach
   const nameInputChangeHandler = event => {
