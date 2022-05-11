@@ -27,6 +27,15 @@ const SimpleInput = props => {
     setEneteredName(event.target.value);
   };
 
+  // Handles states when the input lost focus
+  const nameInputBlurHandler = event => {
+    setEnteredNameTouched(true);
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
+  };
+
   // Function to get the entered value on submission, used for both aproaches
   const formSubmissionHandler = event => {
     event.preventDefault();
@@ -66,6 +75,8 @@ const SimpleInput = props => {
           id='name'
           // Pointer to state handler on every key stroke
           onChange={nameInputChangeHandler}
+          // Built-in property wich allows to react when the user clicked outside of the input, and it lost its focus
+          onBlur={nameInputBlurHandler}
         />
         {/* From validation: provide user feedback based on validation state */}
         {nameInputIsInvalid && (
