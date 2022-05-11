@@ -3,7 +3,7 @@
 //  1. useRef -> Get the value on submitting
 //  2. useState -> Get the value on every key stroke and update state
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const SimpleInput = props => {
   // useRef: initialize hook
@@ -11,7 +11,16 @@ const SimpleInput = props => {
   // useState: initialize
   const [enteredName, setEneteredName] = useState('');
   // State to provide user feedback on validation
-  const [enteredNameIsValid, setEnteredNameIsValid] = useState(true);
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
+  // Set enteredNameIsValid to false, and add a 'touched' state
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+
+  // Adding use effect to log when entered name is changed and is valid
+  useEffect(() => {
+    if (enteredNameIsValid) {
+      console.log('Name Input is valid!');
+    }
+  }, [enteredNameIsValid]);
 
   // Function to update state on input change, for useState aproach
   const nameInputChangeHandler = event => {
@@ -21,6 +30,8 @@ const SimpleInput = props => {
   // Function to get the entered value on submission, used for both aproaches
   const formSubmissionHandler = event => {
     event.preventDefault();
+    // Setting touched to true, because we assume that on submission every form input was touched
+    setEnteredNameTouched(true);
     // Form Validation: if !valid trigger validation state and return
     if (enteredName.trim() === '') {
       setEnteredNameIsValid(false);
@@ -35,10 +46,14 @@ const SimpleInput = props => {
     const enteredValue = nameInputRef.current.value;
     console.log(enteredValue);
   };
+
+  // Adding a boolean to include touched state in validation, this practice prevents posible unwanted behaiviors
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
   // Validation: adding dynamic class names to form
-  const nameInputClasses = enteredNameIsValid
-    ? 'form-control'
-    : 'form-control invalid';
+  const nameInputClasses = nameInputIsInvalid
+    ? 'form-control invalid'
+    : 'form-control';
 
   return (
     <form onSubmit={formSubmissionHandler}>
@@ -53,7 +68,7 @@ const SimpleInput = props => {
           onChange={nameInputChangeHandler}
         />
         {/* From validation: provide user feedback based on validation state */}
-        {!enteredNameIsValid && (
+        {nameInputIsInvalid && (
           <p className='error-text'>Name must not be empty.</p>
         )}
       </div>
