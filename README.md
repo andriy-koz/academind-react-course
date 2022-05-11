@@ -1,1 +1,1 @@
-# academing-react-course
+# academind-react-course
