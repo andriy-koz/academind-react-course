@@ -1,10 +1,11 @@
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 import HeaderCartButton from './HeaderCartButton';
 import mealsImage from '../../assets/meals.jpg';
 import classes from './Header.module.css';
 
-const Header = (props) => {
+const Header = props => {
   return (
     <Fragment>
       <header className={classes.header}>
@@ -16,6 +17,10 @@ const Header = (props) => {
       </div>
     </Fragment>
   );
+};
+
+Header.propTypes = {
+  onShowCart: PropTypes.func.isRequired,
 };
 
 export default Header;
