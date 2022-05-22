@@ -1,3 +1,3 @@
 # academind-react-course
 
-## Learning TypeScript branch
+## My new branch where i learn TypeScript basics
